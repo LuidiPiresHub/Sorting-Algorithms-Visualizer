@@ -28,10 +28,6 @@
   left: 2px;
 }
 
-#sidebar:has(#image:checked) #fileLabel {
-  display: flex;
-}
-
 .range-input::-webkit-slider-thumb {
   -webkit-appearance: none;
   height: 20px;
@@ -131,4 +127,30 @@
 .scrollbar::-webkit-scrollbar-track,
 .scrollbar-thin::-webkit-scrollbar-track {
   background-color: rgb(30, 30, 45);
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.image-overlay {
+  animation: fadeInOut 2.5s ease-in-out forwards;
+}
+
+.image-overlay-text {
+  animation: slideIn 0.6s ease-out forwards;
 }

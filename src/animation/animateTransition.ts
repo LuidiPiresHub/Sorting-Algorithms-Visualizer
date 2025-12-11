@@ -1,6 +1,5 @@
 import type { RefObject } from 'react';
 import type { IAnimationOptions, IFrame } from '../interfaces/animation';
-import { drawBars } from '../arrayModes/drawBars';
 import { swap } from '../utils/swap';
 
 const frames: IFrame[] = [];
@@ -37,7 +36,7 @@ export const animateTransition = (
       lastIdx++;
     }
 
-    drawBars(ctx, array);
+    optionsRef.current.drawFn(ctx, array, optionsRef);
 
     if (progress < 1) {
       optionsRef.current.rafId = requestAnimationFrame(step);

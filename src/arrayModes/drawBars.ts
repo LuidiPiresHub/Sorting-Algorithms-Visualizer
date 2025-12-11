@@ -1,4 +1,5 @@
 import { CANVAS_SIZE } from '../constants/canvas';
+import { defaultColors } from '../utils/arrayColors';
 
 export const drawBars = (ctx: CanvasRenderingContext2D, array: number[]): void => {
   ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -10,7 +11,7 @@ export const drawBars = (ctx: CanvasRenderingContext2D, array: number[]): void =
     const ratio = array[i] / n;
     const h = ratio * CANVAS_SIZE;
 
-    ctx.fillStyle = `rgb(${255 * ratio}, ${255 * (1 - ratio)}, 255)`;
+    ctx.fillStyle = defaultColors(ratio);
     ctx.fillRect(Math.floor(w * i), CANVAS_SIZE - h, Math.ceil(w), h);
   }
 };

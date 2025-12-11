@@ -1,27 +1,15 @@
-import type { IArrayType } from '../interfaces/array';
 import { ascending } from './ascending';
 import { descending } from './descending';
 import { shuffle } from './random';
 import { semi } from './semi';
 
-export const generateArrayType = (array: number[], type?: IArrayType): void => {
-  switch (type) {
-    case 'Random': {
-      shuffle(array);
-      break;
-    }
-    case 'Ascending': {
-      ascending(array)
-      break;
-    }
-    case 'Descending': {
-      descending(array)
-      break;
-    }
-    case 'Semi': {
-      semi(array);
-      break;
-    }
-  }
-}
+type IArrayTypeFn = (array: number[]) => void;
 
+export const arrayTypesMap = {
+  'Random': shuffle,
+  'Ascending': ascending,
+  'Descending': descending,
+  'Semi': semi,
+} satisfies Record<string, IArrayTypeFn>;
+
+export type IArrayType = keyof typeof arrayTypesMap;

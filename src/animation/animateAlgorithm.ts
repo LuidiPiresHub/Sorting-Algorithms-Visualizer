@@ -1,5 +1,4 @@
 import type { RefObject } from 'react';
-import { drawBars } from '../arrayModes/drawBars';
 import { swap } from '../utils/swap';
 import type { IAnimationOptions, IFrame } from '../interfaces/animation';
 
@@ -48,7 +47,7 @@ export const animateAlgorithm = (
       steps--;
     }
 
-    drawBars(ctx, array);
+    optionsRef.current.drawFn(ctx, array, optionsRef);
     optionsRef.current.rafId = requestAnimationFrame(step);
   };
 

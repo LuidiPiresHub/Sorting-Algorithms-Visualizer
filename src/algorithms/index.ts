@@ -17,7 +17,9 @@ import { selectionSort } from './selectionSort';
 import { shellSort } from './shellSort';
 import { timSort } from './timSort';
 
-export const algorithms = {
+type IAlgorithmFn = (array: number[]) => void;
+
+export const algorithmsMap = {
   'Binary Insertion Sort': binaryInsertionSort,
   'Bubble Sort': bubbleSort,
   'Cocktail Shaker Sort': cocktailShakerSort,
@@ -36,6 +38,7 @@ export const algorithms = {
   'Selection Sort': selectionSort,
   'Shell Sort': shellSort,
   'Tim Sort': timSort,
-}
+} satisfies Record<string, IAlgorithmFn>;
 
-export type IAlgorithm = keyof typeof algorithms;
+
+export type IAlgorithm = keyof typeof algorithmsMap;
