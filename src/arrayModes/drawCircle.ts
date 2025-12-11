@@ -15,7 +15,7 @@ export const drawCircle = (ctx: CanvasRenderingContext2D, array: number[]): void
   const size = Math.min(cssW, cssH);
   const centerX = cssW / 2;
   const centerY = cssH / 2;
-  const radius = size / 2 - 20;
+  const radius = Math.max(size / 2 - 20, 0);
 
   const n = array.length;
   const offset = -Math.PI / 2;

@@ -84,7 +84,7 @@ export default function App() {
 
     const algorithmArray = [...array];
     const animationArray = [...array];
-    
+
     const arrayTypeFn = arrayTypesMap[selectedType];
     arrayTypeFn(algorithmArray);
 
@@ -97,15 +97,18 @@ export default function App() {
   };
 
   useEffect(() => {
-    img.onload = () => {
-      optionsRef.current.image = img;
-    }
-  }, [])
-
-  useEffect(() => {
     const ctx = canvasRef.current!.getContext('2d')!;
-    const arrayMode = arrayModesMap[selectedMode];
-    arrayMode(ctx, array, optionsRef);
+    const drawFn = arrayModesMap[selectedMode];
+    drawFn(ctx, array, optionsRef);
+
+    const handleResize = (): void => {
+      drawFn(ctx, array, optionsRef);
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => window.removeEventListener('resize', handleResize);
+
   }, [array, selectedMode])
 
   return (
