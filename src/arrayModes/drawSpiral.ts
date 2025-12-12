@@ -14,7 +14,7 @@ export const drawSpiral = (ctx: CanvasRenderingContext2D, array: number[]): void
   const centerX = cssW / 2;
   const centerY = cssH / 2;
   const ringRadius = Math.min(cssW, cssH) / 2 - 20;
-  const dotRadius = 3;
+  const dotRadius = Math.min(cssW, cssH) < 300 ? 1 : 3;
 
   const n = array.length;
   const offset = -Math.PI / 2;
