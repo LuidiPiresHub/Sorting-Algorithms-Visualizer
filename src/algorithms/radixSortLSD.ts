@@ -34,7 +34,7 @@ const countingSortByDigit = (array: number[], exp: number, base: number): void =
   }
 };
 
-export const radixSort = (array: number[], base: number = 4): void => {
+export const radixSortLSD = (array: number[], base: number = 4): void => {
   const max = Math.max(...array);
   let exp = 1;
 

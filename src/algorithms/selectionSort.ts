@@ -6,9 +6,15 @@ export const selectionSort = (array: number[]): void => {
 
   for (let i = 0; i < n - 1; i++) {
     let min = i;
+    recordAlgorithmFrame({ type: 'min', index: min });
+
 
     for (let j = i + 1; j < n; j++) {
-      if (array[j] < array[min]) min = j;
+      recordAlgorithmFrame({ type: 'compare', indexA: j, indexB: min });
+      if (array[j] < array[min]) {
+        min = j;
+        recordAlgorithmFrame({ type: 'min', index: min });
+      }
     }
 
     if (i !== min) {

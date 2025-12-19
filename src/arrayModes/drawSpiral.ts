@@ -1,7 +1,8 @@
+import type { IArrayModeFn } from '.';
 import { CANVAS_SIZE } from '../constants/canvas';
 import { rainbowColors } from '../utils/arrayColors';
 
-export const drawSpiral = (ctx: CanvasRenderingContext2D, array: number[]): void => {
+export const drawSpiral: IArrayModeFn = ({ ctx, array }): void => {
   ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
   const { width: cssW, height: cssH } = ctx.canvas.getBoundingClientRect();

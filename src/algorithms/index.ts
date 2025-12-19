@@ -12,7 +12,8 @@ import { mergeSortTopDown } from './mergeSortTopDown';
 import { oddEvenSort } from './oddEvenSort';
 import { quickSortLL } from './quickSortLL';
 import { quickSortLR } from './quickSortLR';
-import { radixSort } from './radixSort';
+import { radixSortLSD } from './radixSortLSD';
+import { radixSortMSD } from './radixSortMSD';
 import { selectionSort } from './selectionSort';
 import { shellSort } from './shellSort';
 import { timSort } from './timSort';
@@ -34,7 +35,8 @@ export const algorithmsMap = {
   'Odd-Even Sort': oddEvenSort,
   'Quick Sort ( LL Pointers )': quickSortLL,
   'Quick Sort ( LR Pointers )': quickSortLR,
-  'Radix Sort ( LSD - Base 4 )': radixSort,
+  'Radix Sort ( LSD - Base 4 )': radixSortLSD,
+  'Radix Sort ( MSD - Base 4 )': radixSortMSD,
   'Selection Sort': selectionSort,
   'Shell Sort': shellSort,
   'Tim Sort': timSort,

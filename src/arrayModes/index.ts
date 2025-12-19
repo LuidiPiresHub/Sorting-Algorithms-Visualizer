@@ -5,7 +5,13 @@ import { drawCircle } from './drawCircle';
 import { drawImage } from './drawImage';
 import { drawSpiral } from './drawSpiral';
 
-export type IArrayModeFn = (ctx: CanvasRenderingContext2D, array: number[], optionsRef: RefObject<IAnimationOptions>) => void;
+export interface IArrayModeParams {
+  ctx: CanvasRenderingContext2D,
+  array: number[],
+  optionsRef: RefObject<IAnimationOptions>,
+}
+
+export type IArrayModeFn = (params: IArrayModeParams) => void;
 
 export const arrayModesMap = {
   'Bars': drawBars,

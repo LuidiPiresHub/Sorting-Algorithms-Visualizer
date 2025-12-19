@@ -1,6 +1,6 @@
-import type { RefObject } from 'react';
 import { swap } from '../utils/swap';
-import type { IAnimationOptions, IFrame } from '../interfaces/animation';
+import type { IAnimateAlgorithm, IFrame } from '../interfaces/animation';
+import { playNote } from '../audio/playNote';
 
 const frames: IFrame[] = [];
 
@@ -8,48 +8,53 @@ export const recordAlgorithmFrame = (frame: IFrame): void => {
   frames.push(frame);
 };
 
+export const animateAlgorithm = ({ ctx, array, optionsRef }: IAnimateAlgorithm): Promise<void> => {
+  return new Promise((resolve) => {
+    const ONE_SEC = 1000;
+    const n = frames.length;
+    let idx = 0;
+    let lastTime = 0;
+    let acc = 0;
 
-export const animateAlgorithm = (
-  ctx: CanvasRenderingContext2D,
-  array: number[],
-  optionsRef: RefObject<IAnimationOptions>,
-  onFinish: () => void = () => { }
-): void => {
-  const ONE_SEC = 1000;
-  const n = frames.length;
-  let idx = 0;
-  let lastTime = 0;
-  let acc = 0;
+    const step = (time: number): void => {
+      if (idx >= n || !optionsRef.current.rafId) {
+        frames.length = 0;
+        resolve();
+        return;
+      }
 
-  const step = (time: number) => {
-    if (idx >= n || !optionsRef.current.rafId) {
-      frames.length = 0;
-      onFinish();
-      return;
-    }
+      if (!lastTime) lastTime = time;
+      const delta = (time - lastTime) / ONE_SEC;
+      lastTime = time;
 
-    if (!lastTime) lastTime = time;
-    const delta = (time - lastTime) / ONE_SEC;
-    lastTime = time;
+      const speed = optionsRef.current.speed ** 2;
+      acc += speed * delta;
+      let steps = Math.floor(acc);
+      acc -= steps;
 
-    const speed = optionsRef.current.speed ** 2;
-    acc += speed * delta;
-    let steps = Math.floor(acc);
-    acc -= steps;
+      while (steps > 0 && idx < n) {
+        const f = frames[idx];
 
-    while (steps > 0 && idx < n) {
-      const f = frames[idx];
+        if (f.type === 'swap') {
+          console.log(optionsRef.current.sound);
+          
+          if (optionsRef.current.sound) playNote(array[f.indexA], array.length - 1)
+          swap(array, f.indexA, f.indexB);
+        }
 
-      if (f.type === 'swap') swap(array, f.indexA, f.indexB);
-      if (f.type === 'set') array[f.index] = f.value;
+        if (f.type === 'set') {
+          array[f.index] = f.value;
+          if (optionsRef.current.sound) playNote(array[f.index], array.length - 1)
+        }
 
-      idx++;
-      steps--;
-    }
+        idx++;
+        steps--;
+      }
 
-    optionsRef.current.drawFn(ctx, array, optionsRef);
+      optionsRef.current.drawFn({ ctx, array, optionsRef });
+      optionsRef.current.rafId = requestAnimationFrame(step);
+    };
+
     optionsRef.current.rafId = requestAnimationFrame(step);
-  };
-
-  optionsRef.current.rafId = requestAnimationFrame(step);
+  })
 };

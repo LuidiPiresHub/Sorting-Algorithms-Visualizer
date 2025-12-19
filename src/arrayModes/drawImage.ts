@@ -1,8 +1,7 @@
-import type { RefObject } from 'react';
 import { CANVAS_SIZE } from '../constants/canvas';
-import type { IAnimationOptions } from '../interfaces/animation';
+import type { IArrayModeFn } from '.';
 
-export const drawImage = (ctx: CanvasRenderingContext2D, array: number[], optionsRef: RefObject<IAnimationOptions>): void => {
+export const drawImage: IArrayModeFn = ({ ctx, array, optionsRef }): void => {
   ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
   
   const { image } = optionsRef.current;

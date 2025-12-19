@@ -7,13 +7,14 @@ import { algorithmsMap, type IAlgorithm } from './algorithms';
 import { arrayModesMap, type IArrayMode } from './arrayModes';
 import defaultImage from './images/defaultImage.png';
 import { arrayTypesMap, type IArrayType } from './arrayTypes';
+// import { initAudio } from './audio/playNote';
 
 const generateArray = (length: number): number[] => {
   const array = Array.from({ length }, (_, i) => i + 1);
   return array;
 }
 
-const sleep = (ms: number = 500) => new Promise<void>((res) => setTimeout(res, ms));
+const sleep = (ms: number) => new Promise<void>((res) => setTimeout(res, ms));
 
 const img = new Image();
 img.src = defaultImage
@@ -41,7 +42,7 @@ export default function App() {
   const handleArraySize = (sizeStr: string): void => {
     const size = Number(sizeStr);
     const newSize = Math.min(size, CANVAS_SIZE);
-    setArraySize(newSize === 0 ? '' : String(newSize));
+    setArraySize(newSize <= 0 ? '' : String(newSize));
   }
 
   const handleSpeedChange = (speed: number): void => {
@@ -64,18 +65,18 @@ export default function App() {
       img.onload = () => {
         optionsRef.current.image = img;
         const drawFn = arrayModesMap[selectedMode];
-        drawFn(ctx, array, optionsRef);
+        drawFn({ ctx, array, optionsRef });
       };
     }
   };
 
-  const handleAnimate = (): void => {
+  const handleAnimate = async (): Promise<void> => {
     const ctx = canvasRef.current!.getContext('2d')!;
 
     if (isSorting && optionsRef.current.rafId) {
       optionsRef.current.rafId = null;
       const drawFn = arrayModesMap[selectedMode];
-      drawFn(ctx, array, optionsRef);
+      drawFn({ ctx, array, optionsRef });
       setIsSorting(false);
       return;
     }
@@ -86,23 +87,25 @@ export default function App() {
     const animationArray = [...array];
 
     const arrayTypeFn = arrayTypesMap[selectedType];
+    const sortFn = algorithmsMap[selectedAlgorithm]
+    
     arrayTypeFn(algorithmArray);
 
-    animateTransition(ctx, animationArray, 800, optionsRef, async () => {
-      await sleep()
-      const sortFn = algorithmsMap[selectedAlgorithm]
-      sortFn(algorithmArray)
-      animateAlgorithm(ctx, animationArray, optionsRef, () => setIsSorting(false));
-    })
+    // initAudio()
+    await animateTransition({ ctx, array: animationArray, duration: 800, optionsRef })
+    await sleep(500);
+    sortFn(algorithmArray)
+    await animateAlgorithm({ ctx, array: animationArray, optionsRef });
+    setIsSorting(false);
   };
 
   useEffect(() => {
     const ctx = canvasRef.current!.getContext('2d')!;
     const drawFn = arrayModesMap[selectedMode];
-    drawFn(ctx, array, optionsRef);
+    drawFn({ ctx, array, optionsRef });
 
     const handleResize = (): void => {
-      drawFn(ctx, array, optionsRef);
+      drawFn({ ctx, array, optionsRef });
     }
 
     window.addEventListener('resize', handleResize)
@@ -140,7 +143,7 @@ export default function App() {
           </label>
 
           <label htmlFor="sound" className='flex items-center gap-2 hover:text-blue-400 transition-colors cursor-pointer select-none'>
-            <input id='sound' type="checkbox" className='custom-checkbox' />
+            <input id='sound' type="checkbox" className='custom-checkbox' onChange={({ target: { checked } }) => optionsRef.current.sound = checked} />
             <span>Sound?</span>
           </label>
 
