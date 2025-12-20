@@ -1,4 +1,4 @@
-import { recordAlgorithmFrame } from '../animation/animateAlgorithm';
+import { recordAlgorithmFrame } from '../animation/recordFrame';
 
 export const shellSort = (array: number[]): void => {
   const n = array.length;

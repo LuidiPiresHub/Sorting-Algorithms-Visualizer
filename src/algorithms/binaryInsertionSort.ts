@@ -1,4 +1,4 @@
-import { recordAlgorithmFrame } from '../animation/animateAlgorithm';
+import { recordAlgorithmFrame } from '../animation/recordFrame';
 
 export const binaryInsertionSort = (array: number[]): void => {
   for (let i = 1; i < array.length; i++) {

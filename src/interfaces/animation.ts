@@ -11,8 +11,8 @@ export type IFrame =
 
 export interface IAnimationOptions {
   speed: number;
-  rafId: number | null;
-  color: boolean;
+  isAnimating: boolean;
+  isColored: boolean;
   sound: boolean;
   drawFn: IArrayModeFn;
   image: HTMLImageElement;
@@ -22,8 +22,5 @@ export interface IAnimateAlgorithm {
   ctx: CanvasRenderingContext2D;
   array: number[];
   optionsRef: RefObject<IAnimationOptions>;
-}
-
-export interface IAnimateTransition extends IAnimateAlgorithm {
-  duration: number;
+  duration?: number;
 }

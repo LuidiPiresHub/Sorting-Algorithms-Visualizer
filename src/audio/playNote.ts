@@ -1,70 +1,11 @@
-// let audioCtx: AudioContext | null = null;
-// let masterGain: GainNode | null = null;
-
-// let activeNotes = 0;
-// const MAX_NOTES = 32;
-
-// export const initAudio = () => {
-//   if (!audioCtx) {
-//     audioCtx = new AudioContext();
-
-//     masterGain = audioCtx.createGain();
-//     masterGain.gain.value = 0.04; // volume baixo e estável
-//     masterGain.connect(audioCtx.destination);
-//   }
-
-//   if (audioCtx.state === "suspended") {
-//     audioCtx.resume();
-//   }
-// };
-
-// const valueToFrequency = (value: number, maxValue: number) => {
-//   const minFreq = 120;
-//   const maxFreq = 1212;
-//   return minFreq + (value / maxValue) * (maxFreq - minFreq);
-// };
-
-// export const playNote = (
-//   value: number,
-//   maxValue: number,
-//   duration = 0.025
-// ) => {
-//   if (!audioCtx || !masterGain) return;
-//   if (activeNotes >= MAX_NOTES) return;
-
-//   activeNotes++;
-
-//   const osc = audioCtx.createOscillator();
-//   const gain = audioCtx.createGain();
-
-//   osc.type = "triangle";
-//   osc.frequency.value = valueToFrequency(value, maxValue);
-
-//   const now = audioCtx.currentTime;
-
-//   // envelope simples (igual ao original)
-//   gain.gain.setValueAtTime(0.04, now);
-//   gain.gain.linearRampToValueAtTime(0, now + duration);
-
-//   osc.connect(gain);
-//   gain.connect(masterGain);
-
-//   osc.start(now);
-//   osc.stop(now + duration);
-
-//   osc.onended = () => {
-//     activeNotes--;
-//   };
-// };
-
 const audioCtx = new window.AudioContext();
 let activeNotes = 0;
 const MAX_NOTES = 100;
 
 const GLOBAL_VOLUME = 0.3;
 
-export function playNote(value: number, arrayLength: number): void {
-  if (activeNotes >= MAX_NOTES) return;
+export function playNote(sound: boolean, value: number, arrayLength: number): void {
+  if (!sound ||activeNotes >= MAX_NOTES) return;
   activeNotes++;
 
   const now = audioCtx.currentTime;

@@ -18,7 +18,7 @@ import { selectionSort } from './selectionSort';
 import { shellSort } from './shellSort';
 import { timSort } from './timSort';
 
-type IAlgorithmFn = (array: number[]) => void;
+type IAlgorithmFn = (array: number[], base?: number) => void;
 
 export const algorithmsMap = {
   'Binary Insertion Sort': binaryInsertionSort,
@@ -35,8 +35,8 @@ export const algorithmsMap = {
   'Odd-Even Sort': oddEvenSort,
   'Quick Sort ( LL Pointers )': quickSortLL,
   'Quick Sort ( LR Pointers )': quickSortLR,
-  'Radix Sort ( LSD - Base 4 )': radixSortLSD,
-  'Radix Sort ( MSD - Base 4 )': radixSortMSD,
+  'Radix Sort ( LSD )': radixSortLSD,
+  'Radix Sort ( MSD )': radixSortMSD,
   'Selection Sort': selectionSort,
   'Shell Sort': shellSort,
   'Tim Sort': timSort,

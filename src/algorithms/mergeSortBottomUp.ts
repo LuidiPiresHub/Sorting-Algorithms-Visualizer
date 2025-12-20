@@ -1,4 +1,4 @@
-import { recordAlgorithmFrame } from '../animation/animateAlgorithm';
+import { recordAlgorithmFrame } from '../animation/recordFrame';
 
 const merge = (array: number[], aux: number[], left: number, mid: number, right: number): void => {
   let i = left;

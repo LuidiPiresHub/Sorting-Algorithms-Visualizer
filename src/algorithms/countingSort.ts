@@ -1,4 +1,4 @@
-import { recordAlgorithmFrame } from '../animation/animateAlgorithm';
+import { recordAlgorithmFrame } from '../animation/recordFrame';
 
 export const countingSort = (array: number[]): void => {
   const n = array.length;

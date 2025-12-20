@@ -2,36 +2,33 @@ import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { CANVAS_SIZE } from './constants/canvas';
 import { animateAlgorithm } from './animation/animateAlgorithm';
 import type { IAnimationOptions } from './interfaces/animation';
-import { animateTransition } from './animation/animateTransition';
 import { algorithmsMap, type IAlgorithm } from './algorithms';
 import { arrayModesMap, type IArrayMode } from './arrayModes';
 import defaultImage from './images/defaultImage.png';
 import { arrayTypesMap, type IArrayType } from './arrayTypes';
-// import { initAudio } from './audio/playNote';
-
-const generateArray = (length: number): number[] => {
-  const array = Array.from({ length }, (_, i) => i + 1);
-  return array;
-}
-
-const sleep = (ms: number) => new Promise<void>((res) => setTimeout(res, ms));
+import Modal from './components/Modal';
+import { generateArray } from './utils/array';
+import { sleep } from './utils/sleep';
 
 const img = new Image();
 img.src = defaultImage
 
 export default function App() {
+  const [isColored, setisColored] = useState<boolean>(false);
   const [speed, setSpeed] = useState<number>(50);
   const [arraySize, setArraySize] = useState<string>('256');
   const [selectedType, setSelectedType] = useState<IArrayType>('Random');
   const [selectedMode, setSelectedMode] = useState<IArrayMode>('Bars');
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<IAlgorithm>('Bubble Sort');
   const [isSorting, setIsSorting] = useState<boolean>(false);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const baseRef = useRef<number>(4);
   const optionsRef = useRef<IAnimationOptions>({
     speed: 50,
-    rafId: null,
-    color: true,
+    isAnimating: isSorting,
+    isColored,
     sound: false,
     drawFn: arrayModesMap[selectedMode],
     image: img,
@@ -39,15 +36,20 @@ export default function App() {
 
   const array = useMemo(() => generateArray(Math.max(Number(arraySize), 10)), [arraySize]);
 
-  const handleArraySize = (sizeStr: string): void => {
-    const size = Number(sizeStr);
-    const newSize = Math.min(size, CANVAS_SIZE);
-    setArraySize(newSize <= 0 ? '' : String(newSize));
+  const handleColorChange = (checked: boolean): void => {
+    setisColored(checked);
+    optionsRef.current.isColored = checked;
   }
 
   const handleSpeedChange = (speed: number): void => {
     optionsRef.current.speed = speed;
     setSpeed(speed);
+  }
+
+  const handleArraySize = (sizeStr: string): void => {
+    const size = Number(sizeStr);
+    const newSize = Math.min(size, CANVAS_SIZE);
+    setArraySize(newSize <= 0 ? '' : String(newSize));
   }
 
   const handleArrayMode = (mode: IArrayMode): void => {
@@ -73,28 +75,35 @@ export default function App() {
   const handleAnimate = async (): Promise<void> => {
     const ctx = canvasRef.current!.getContext('2d')!;
 
-    if (isSorting && optionsRef.current.rafId) {
-      optionsRef.current.rafId = null;
+    if (isSorting) {
+      optionsRef.current.isAnimating = false;
+
       const drawFn = arrayModesMap[selectedMode];
       drawFn({ ctx, array, optionsRef });
+
       setIsSorting(false);
       return;
     }
 
+    if (selectedAlgorithm.includes('Radix') && !modalIsOpen) {
+      setModalIsOpen(true);
+      return;
+    }
+
     setIsSorting(true);
+    optionsRef.current.isAnimating = true;
 
     const algorithmArray = [...array];
     const animationArray = [...array];
 
     const arrayTypeFn = arrayTypesMap[selectedType];
-    const sortFn = algorithmsMap[selectedAlgorithm]
-    
     arrayTypeFn(algorithmArray);
 
-    // initAudio()
-    await animateTransition({ ctx, array: animationArray, duration: 800, optionsRef })
+    await animateAlgorithm({ ctx, array: animationArray, optionsRef, duration: 800 });
     await sleep(500);
-    sortFn(algorithmArray)
+    const sortFn = algorithmsMap[selectedAlgorithm]
+    sortFn(algorithmArray, baseRef.current)
+
     await animateAlgorithm({ ctx, array: animationArray, optionsRef });
     setIsSorting(false);
   };
@@ -112,10 +121,20 @@ export default function App() {
 
     return () => window.removeEventListener('resize', handleResize);
 
-  }, [array, selectedMode])
+  }, [array, selectedMode, isColored])
 
   return (
     <main className='h-dvh text-white flex flex-col lg:flex-row'>
+      <Modal
+        isOpen={modalIsOpen}
+        onBaseChange={(base) => baseRef.current = base}
+        onCancel={() => setModalIsOpen(false)}
+        onConfirm={async () => {
+          setModalIsOpen(false);
+          await sleep(500)
+          handleAnimate();
+        }}
+      />
       <div className="relative">
         {selectedMode === 'Image' && (
           <label htmlFor='file' className="absolute inset-0 z-10 bg-black/70 flex justify-center items-center cursor-pointer image-overlay">
@@ -136,10 +155,10 @@ export default function App() {
       <aside className='bg-[rgb(40,40,60)] py-4 px-6 flex flex-col gap-4 h-full w-full lg:w-[400px] lg:shrink-0 overflow-y-auto scrollbar'>
         <h1 className='text-lg sm:text-2xl font-bold text-blue-400 text-center sm:whitespace-nowrap'>Sorting Algorithms Visualizer</h1>
 
-        <div className='flex max-[300px]:flex-col gap-4 justify-evenly'>
+        <div className='flex max-[350px]:flex-col gap-4 justify-evenly'>
           <label htmlFor="color" className='flex items-center gap-2 hover:text-blue-400 transition-colors cursor-pointer select-none'>
-            <input id='color' type="checkbox" className='custom-checkbox' defaultChecked onChange={({ target: { checked } }) => optionsRef.current.color = checked} />
-            <span>Color?</span>
+            <input id='color' type="checkbox" className='custom-checkbox' checked={isColored} onChange={({ target: { checked } }) => handleColorChange(checked)} />
+            <span>Colored?</span>
           </label>
 
           <label htmlFor="sound" className='flex items-center gap-2 hover:text-blue-400 transition-colors cursor-pointer select-none'>
@@ -179,7 +198,7 @@ export default function App() {
             value={arraySize}
             disabled={isSorting}
             onChange={({ target: { value } }) => handleArraySize(value)}
-            placeholder={`min: 10 - max: 2048`}
+            placeholder='Min: 10 - Max: 2048'
             className={`bg-gray-800 border border-gray-700 rounded px-2 py-1 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 no-spinner ${isSorting ? 'opacity-50 cursor-default' : 'cursor-auto'}`}
           />
         </label>

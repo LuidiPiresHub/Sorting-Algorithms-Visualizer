@@ -1,4 +1,4 @@
-import { recordAlgorithmFrame } from '../animation/animateAlgorithm';
+import { recordAlgorithmFrame } from '../animation/recordFrame';
 import { swap } from '../utils/swap';
 
 export const selectionSort = (array: number[]): void => {

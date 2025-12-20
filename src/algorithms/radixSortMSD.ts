@@ -1,4 +1,4 @@
-import { recordAlgorithmFrame } from '../animation/animateAlgorithm';
+import { recordAlgorithmFrame } from '../animation/recordFrame';
 
 function getDigit(num: number, p: number, base: number): number {
   return Math.floor(num / base ** p) % base;
@@ -52,8 +52,8 @@ function msdSortInPlace(
   }
 }
 
-export function radixSortMSD(arr: number[], base: number = 10): void {
-  if (arr.length === 0) return;
+export function radixSortMSD(arr: number[], base?: number): void {
+  if (arr.length === 0 || !base) return;
 
   const max = Math.max(...arr);
   const k = countDigits(max, base);

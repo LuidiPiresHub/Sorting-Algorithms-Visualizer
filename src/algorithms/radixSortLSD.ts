@@ -1,4 +1,4 @@
-import { recordAlgorithmFrame } from '../animation/animateAlgorithm';
+import { recordAlgorithmFrame } from '../animation/recordFrame';
 
 const countingSortByDigit = (array: number[], exp: number, base: number): void => {
   const n = array.length;
@@ -34,7 +34,9 @@ const countingSortByDigit = (array: number[], exp: number, base: number): void =
   }
 };
 
-export const radixSortLSD = (array: number[], base: number = 4): void => {
+export const radixSortLSD = (array: number[], base?: number): void => {
+  if (!base) return;
+  
   const max = Math.max(...array);
   let exp = 1;
 
