@@ -5,8 +5,8 @@ import { globalFrames } from './recordFrame';
 
 export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateAlgorithm): Promise<void> => {
   return new Promise((resolve) => {
-    const { isAnimating, speed, sound, sortedSet, drawFn } = optionsRef.current;
-    sortedSet.clear();
+    const { current } = optionsRef
+    current.sortedSet.clear();
     const frames = globalFrames.splice(0);
     const ONE_SEC = 1000;
     const n = frames.length;
@@ -15,7 +15,7 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
     let acc = 0;
 
     const step = (time: number): void => {
-      if (idx >= n || !isAnimating) {
+      if (idx >= n || !current.isAnimating) {
         resolve();
         return;
       }
@@ -27,7 +27,7 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
       if (duration) {
         acc += (n / (duration / 1000)) * delta;
       } else {
-        acc += speed ** 2 * delta;
+        acc += current.speed ** 2 * delta;
       }
 
       let steps = Math.floor(acc);
@@ -37,25 +37,25 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
         const f = frames[idx];
 
         if (f.type === 'swap') {
-          playNote(sound, array[f.indexA], array.length - 1);
+          playNote(current.sound, array[f.indexA], array.length - 1);
           swap(array, f.indexA, f.indexB);
         }
 
         if (f.type === 'set') {
           array[f.index] = f.value;
-          playNote(sound, array[f.index], array.length - 1)
+          playNote(current.sound, array[f.index], array.length - 1)
         }
 
         if (f.type === 'check') {
-          sortedSet.add(f.index);
-          playNote(sound, array[f.index], array.length - 1);
+          current.sortedSet.add(f.index);
+          playNote(current.sound, array[f.index], array.length - 1);
         }
 
         idx++;
         steps--;
       }
 
-      drawFn({ ctx, array, optionsRef });
+      current.drawFn({ ctx, array, optionsRef });
       requestAnimationFrame(step);
     };
 
