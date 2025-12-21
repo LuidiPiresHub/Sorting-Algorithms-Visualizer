@@ -10,8 +10,14 @@ const rainbowColors = (ratio: number): string => {
 };
 
 export const getColors = (optionsRef: RefObject<IAnimationOptions>, ratio: number, index: number): string => {
-  const { sortedSet, isColored } = optionsRef.current
+  const { sortedSet, isColored, highlight: { persistent, transient } } = optionsRef.current
   if (sortedSet.has(index)) return 'lime';
+
+if (transient.has(index)) return 'red';
+if (persistent.get('min') === index) return 'blue';
+if (persistent.get('max') === index) return 'yellow';
+if (persistent.get('current') === index) return 'black';
+
   if (isColored) return rainbowColors(ratio)
   return defaultColors(ratio)
 }

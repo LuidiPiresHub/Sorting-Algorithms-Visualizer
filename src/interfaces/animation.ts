@@ -18,6 +18,10 @@ export interface IAnimationOptions {
   drawFn: IArrayModeFn;
   image: HTMLImageElement;
   sortedSet: Set<number>;
+  highlight: {
+    persistent: Map<string, number>
+    transient: Set<number>
+  }
 };
 
 export interface IAnimateAlgorithm {

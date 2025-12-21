@@ -34,6 +34,10 @@ export default function App() {
     drawFn: arrayModesMap[selectedMode],
     image: img,
     sortedSet: new Set<number>(),
+    highlight: {
+      persistent: new Map<string, number>(),
+      transient: new Set<number>()
+    }
   });
 
   const array = useMemo(() => generateArray(Math.max(Number(arraySize), 10)), [arraySize]);

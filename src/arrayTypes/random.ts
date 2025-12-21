@@ -6,6 +6,5 @@ export const shuffle = (array: number[]): void => {
     const j = Math.floor(Math.random() * (i + 1));
     swap(array, i, j);
     recordAlgorithmFrame({ type: 'swap', indexA: i, indexB: j });
-
   }
 }

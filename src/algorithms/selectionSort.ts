@@ -10,7 +10,7 @@ export const selectionSort = (array: number[]): void => {
 
 
     for (let j = i + 1; j < n; j++) {
-      recordAlgorithmFrame({ type: 'compare', indexA: j, indexB: min });
+      recordAlgorithmFrame({ type: 'current', index: j });
       if (array[j] < array[min]) {
         min = j;
         recordAlgorithmFrame({ type: 'min', index: min });
