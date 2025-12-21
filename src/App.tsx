@@ -126,11 +126,12 @@ export default function App() {
   useEffect(() => {
     const ctx = canvasRef.current!.getContext('2d')!;
     const drawFn = arrayModesMap[selectedMode];
-    drawFn({ ctx, array, optionsRef });
 
     const handleResize = (): void => {
       drawFn({ ctx, array, optionsRef });
     }
+
+    handleResize();
 
     window.addEventListener('resize', handleResize)
 
