@@ -5,7 +5,8 @@ import { globalFrames } from './recordFrame';
 
 export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateAlgorithm): Promise<void> => {
   return new Promise((resolve) => {
-    optionsRef.current.sortedSet.clear();
+    const { isAnimating, speed, sound, sortedSet, drawFn } = optionsRef.current;
+    sortedSet.clear();
     const frames = globalFrames.splice(0);
     const ONE_SEC = 1000;
     const n = frames.length;
@@ -14,7 +15,7 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
     let acc = 0;
 
     const step = (time: number): void => {
-      if (idx >= n || !optionsRef.current.isAnimating) {
+      if (idx >= n || !isAnimating) {
         resolve();
         return;
       }
@@ -26,15 +27,13 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
       if (duration) {
         acc += (n / (duration / 1000)) * delta;
       } else {
-        const speed = optionsRef.current.speed ** 2;
-        acc += speed * delta;
+        acc += speed ** 2 * delta;
       }
 
       let steps = Math.floor(acc);
       acc -= steps;
 
       while (steps > 0 && idx < n) {
-        const sound = optionsRef.current.sound;
         const f = frames[idx];
 
         if (f.type === 'swap') {
@@ -48,7 +47,7 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
         }
 
         if (f.type === 'check') {
-          optionsRef.current.sortedSet.add(f.index);
+          sortedSet.add(f.index);
           playNote(sound, array[f.index], array.length - 1);
         }
 
@@ -56,7 +55,7 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
         steps--;
       }
 
-      optionsRef.current.drawFn({ ctx, array, optionsRef });
+      drawFn({ ctx, array, optionsRef });
       requestAnimationFrame(step);
     };
 
