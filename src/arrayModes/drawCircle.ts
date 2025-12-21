@@ -1,5 +1,5 @@
-import type { IArrayModeFn } from '.';
 import { CANVAS_SIZE } from '../constants/canvas';
+import type { IArrayModeFn } from '../interfaces/arrayMode';
 import { getColors } from '../utils/colors';
 
 export const drawCircle: IArrayModeFn = ({ ctx, array, optionsRef }): void => {
@@ -26,7 +26,7 @@ export const drawCircle: IArrayModeFn = ({ ctx, array, optionsRef }): void => {
     const endAngle = ((i + 1) / n) * Math.PI * 2 + offset;
 
     const ratio = array[i] / n;
-    ctx.fillStyle = getColors(optionsRef.current.isColored, ratio);
+    ctx.fillStyle = getColors(optionsRef, ratio, i);
 
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);

@@ -1,5 +1,5 @@
-import type { IArrayModeFn } from '.';
 import { CANVAS_SIZE } from '../constants/canvas';
+import type { IArrayModeFn } from '../interfaces/arrayMode';
 import { getColors } from '../utils/colors';
 
 export const drawSpiral: IArrayModeFn = ({ ctx, array, optionsRef }): void => {
@@ -28,7 +28,7 @@ export const drawSpiral: IArrayModeFn = ({ ctx, array, optionsRef }): void => {
     const x = centerX + Math.cos(angle) * r;
     const y = centerY + Math.sin(angle) * r;
 
-    ctx.fillStyle = getColors(optionsRef.current.isColored, ratio);
+    ctx.fillStyle = getColors(optionsRef, ratio, i);
 
     ctx.beginPath();
     ctx.arc(x, y, dotRadius, 0, Math.PI * 2);

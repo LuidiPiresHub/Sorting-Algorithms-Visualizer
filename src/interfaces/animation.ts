@@ -1,5 +1,5 @@
 import type { RefObject } from 'react';
-import type { IArrayModeFn } from '../arrayModes';
+import type { IArrayModeFn } from './arrayMode';
 
 export type IFrame =
   | { type: 'compare', indexA: number, indexB: number }
@@ -8,6 +8,7 @@ export type IFrame =
   | { type: 'current', index: number }
   | { type: 'min', index: number }
   | { type: 'max', index: number }
+  | { type: 'check', index: number }
 
 export interface IAnimationOptions {
   speed: number;
@@ -16,6 +17,7 @@ export interface IAnimationOptions {
   sound: boolean;
   drawFn: IArrayModeFn;
   image: HTMLImageElement;
+  sortedSet: Set<number>;
 };
 
 export interface IAnimateAlgorithm {

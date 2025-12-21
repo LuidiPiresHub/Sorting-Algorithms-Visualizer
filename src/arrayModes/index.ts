@@ -1,17 +1,8 @@
-import type { RefObject } from 'react';
-import type { IAnimationOptions } from '../interfaces/animation';
+import type { IArrayModeFn } from '../interfaces/arrayMode';
 import { drawBars } from './drawBars';
 import { drawCircle } from './drawCircle';
 import { drawImage } from './drawImage';
 import { drawSpiral } from './drawSpiral';
-
-export interface IArrayModeParams {
-  ctx: CanvasRenderingContext2D,
-  array: number[],
-  optionsRef: RefObject<IAnimationOptions>,
-}
-
-export type IArrayModeFn = (params: IArrayModeParams) => void;
 
 export const arrayModesMap = {
   'Bars': drawBars,

@@ -1,5 +1,5 @@
 import { CANVAS_SIZE } from '../constants/canvas';
-import type { IArrayModeFn } from '.';
+import type { IArrayModeFn } from '../interfaces/arrayMode';
 
 export const drawImage: IArrayModeFn = ({ ctx, array, optionsRef }): void => {
   ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);

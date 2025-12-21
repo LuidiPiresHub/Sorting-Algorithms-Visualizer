@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react';
 import { CANVAS_SIZE } from './constants/canvas';
-import { animateAlgorithm } from './animation/animateAlgorithm';
-import type { IAnimationOptions } from './interfaces/animation';
+import { generateArray } from './utils/array';
 import { algorithmsMap, type IAlgorithm } from './algorithms';
 import { arrayModesMap, type IArrayMode } from './arrayModes';
-import defaultImage from './images/defaultImage.png';
 import { arrayTypesMap, type IArrayType } from './arrayTypes';
-import Modal from './components/Modal';
-import { generateArray } from './utils/array';
+import { animateAlgorithm } from './animation/animateAlgorithm';
+import type { IAnimationOptions } from './interfaces/animation';
 import { sleep } from './utils/sleep';
+import { finalCheck } from './animation/finalCheck';
+import defaultImage from './images/defaultImage.png';
+import Modal from './components/Modal';
 
 const img = new Image();
 img.src = defaultImage
@@ -32,6 +33,7 @@ export default function App() {
     sound: false,
     drawFn: arrayModesMap[selectedMode],
     image: img,
+    sortedSet: new Set<number>(),
   });
 
   const array = useMemo(() => generateArray(Math.max(Number(arraySize), 10)), [arraySize]);
@@ -72,6 +74,7 @@ export default function App() {
     }
   };
 
+
   const handleAnimate = async (): Promise<void> => {
     const ctx = canvasRef.current!.getContext('2d')!;
 
@@ -101,10 +104,22 @@ export default function App() {
 
     await animateAlgorithm({ ctx, array: animationArray, optionsRef, duration: 800 });
     await sleep(500);
+
     const sortFn = algorithmsMap[selectedAlgorithm]
     sortFn(algorithmArray, baseRef.current)
 
     await animateAlgorithm({ ctx, array: animationArray, optionsRef });
+
+    finalCheck(algorithmArray)
+    await animateAlgorithm({ ctx, array: animationArray, optionsRef, duration: 800 });
+
+    await sleep(500);
+    optionsRef.current.sortedSet.clear();
+
+    const drawFn = arrayModesMap[selectedMode];
+    drawFn({ ctx, array: algorithmArray, optionsRef });
+
+    optionsRef.current.isAnimating = false;
     setIsSorting(false);
   };
 

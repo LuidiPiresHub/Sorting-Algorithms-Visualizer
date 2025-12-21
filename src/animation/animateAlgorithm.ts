@@ -5,6 +5,7 @@ import { globalFrames } from './recordFrame';
 
 export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateAlgorithm): Promise<void> => {
   return new Promise((resolve) => {
+    optionsRef.current.sortedSet.clear();
     const frames = globalFrames.splice(0);
     const ONE_SEC = 1000;
     const n = frames.length;
@@ -44,6 +45,11 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
         if (f.type === 'set') {
           array[f.index] = f.value;
           playNote(sound, array[f.index], array.length - 1)
+        }
+
+        if (f.type === 'check') {
+          optionsRef.current.sortedSet.add(f.index);
+          playNote(sound, array[f.index], array.length - 1);
         }
 
         idx++;
