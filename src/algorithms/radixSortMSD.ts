@@ -21,9 +21,9 @@ function msdSortInPlace(
   const buckets: number[][] = Array.from({ length: base }, () => []);
 
   for (let i = start; i < end; i++) {
-    // recordAlgorithmFrame({ type: 'read', index: i });
     const digit = getDigit(arr[i], p, base);
     buckets[digit].push(arr[i]);
+    recordAlgorithmFrame({ type: 'set', index: i, value: arr[i] });
   }
 
   let index = end - 1;
@@ -40,7 +40,6 @@ function msdSortInPlace(
       index--;
     }
   }
-
 
   index = start;
   for (const bucket of buckets) {

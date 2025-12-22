@@ -1,11 +1,17 @@
+import type { RefObject } from 'react';
+import type { IAnimationOptions } from '../interfaces/animation';
+
 const audioCtx = new window.AudioContext();
 let activeNotes = 0;
 const MAX_NOTES = 100;
 
 const GLOBAL_VOLUME = 0.3;
 
-export function playNote(sound: boolean, value: number, arrayLength: number): void {
-  if (!sound ||activeNotes >= MAX_NOTES) return;
+export function playNote(optionsRef: RefObject<IAnimationOptions>, value: number): void {
+  const { current } = optionsRef;
+  const { arrayLength } = current;
+
+  if (!current.sound ||activeNotes >= MAX_NOTES) return;
   activeNotes++;
 
   const now = audioCtx.currentTime;

@@ -1,4 +1,3 @@
-import { binaryInsertionSort } from './binaryInsertionSort';
 import { bubbleSort } from './bubbleSort';
 import { cocktailShakerSort } from './cocktailShakerSort';
 import { combSort } from './combSort';
@@ -21,7 +20,6 @@ import { timSort } from './timSort';
 type IAlgorithmFn = (array: number[], base?: number) => void;
 
 export const algorithmsMap = {
-  'Binary Insertion Sort': binaryInsertionSort,
   'Bubble Sort': bubbleSort,
   'Cocktail Shaker Sort': cocktailShakerSort,
   'Comb Sort': combSort,

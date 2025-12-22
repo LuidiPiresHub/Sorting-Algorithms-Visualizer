@@ -34,35 +34,31 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
       acc -= steps;
 
       while (steps > 0 && idx < n) {
-        // current.highlight.transient.clear();
+        current.highlightSet.clear();
         const f = frames[idx];
 
         if (f.type === 'swap') {
-          playNote(current.sound, array[f.indexA], array.length - 1);
+          playNote(optionsRef, array[f.indexA]);
           swap(array, f.indexA, f.indexB);
-          current.highlight.transient.clear();
-          current.highlight.transient.add(f.indexA);
-          current.highlight.transient.add(f.indexB);
+          current.highlightSet.add(f.indexA)
+          current.highlightSet.add(f.indexB)
         }
 
         if (f.type === 'set') {
           array[f.index] = f.value;
-          playNote(current.sound, array[f.index], array.length - 1)
-          current.highlight.transient.add(f.index);
+          playNote(optionsRef, array[f.index])
+          current.highlightSet.add(f.index);
+        }
+
+        if (f.type === 'current') {
+          current.highlightSet.add(f.index);
         }
 
         if (f.type === 'check') {
           current.sortedSet.add(f.index);
-          playNote(current.sound, array[f.index], array.length - 1);
+          playNote(optionsRef, array[f.index]);
         }
 
-        if (f.type === 'current') {
-          current.highlight.transient.add(f.index);
-        }
-
-        if (f.type === 'min') {
-          current.highlight.persistent.set('min', f.index);
-        }
 
         idx++;
         steps--;

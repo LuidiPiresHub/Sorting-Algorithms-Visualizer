@@ -27,17 +27,16 @@ export default function App() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const baseRef = useRef<number>(4);
   const optionsRef = useRef<IAnimationOptions>({
-    speed: 50,
+    speed,
     isAnimating: isSorting,
     isColored,
     sound: false,
+    highlight: false,
     drawFn: arrayModesMap[selectedMode],
     image: img,
     sortedSet: new Set<number>(),
-    highlight: {
-      persistent: new Map<string, number>(),
-      transient: new Set<number>()
-    }
+    highlightSet: new Set<number>(),
+    arrayLength: Number(arraySize),
   });
 
   const array = useMemo(() => generateArray(Math.max(Number(arraySize), 10)), [arraySize]);
@@ -56,6 +55,7 @@ export default function App() {
     const size = Number(sizeStr);
     const newSize = Math.min(size, CANVAS_SIZE);
     setArraySize(newSize <= 0 ? '' : String(newSize));
+    optionsRef.current.arrayLength = newSize;
   }
 
   const handleArrayMode = (mode: IArrayMode): void => {
@@ -78,12 +78,12 @@ export default function App() {
     }
   };
 
-
   const handleAnimate = async (): Promise<void> => {
     const ctx = canvasRef.current!.getContext('2d')!;
 
     if (isSorting) {
       optionsRef.current.isAnimating = false;
+      optionsRef.current.highlightSet.clear();
 
       const drawFn = arrayModesMap[selectedMode];
       drawFn({ ctx, array, optionsRef });
@@ -187,7 +187,7 @@ export default function App() {
           </label>
 
           <label htmlFor="image" className='flex items-center gap-2 hover:text-blue-400 transition-colors cursor-pointer select-none'>
-            <input id='image' type="checkbox" className='custom-checkbox' />
+            <input id='image' type="checkbox" className='custom-checkbox'  onChange={({ target: { checked } }) => optionsRef.current.highlight = checked}  />
             <span>Highlight?</span>
           </label>
         </div>

@@ -9,15 +9,20 @@ const rainbowColors = (ratio: number): string => {
   return `hsl(${360 * ratio}, 100%, 50%)`;
 };
 
+
 export const getColors = (optionsRef: RefObject<IAnimationOptions>, ratio: number, index: number): string => {
-  const { sortedSet, isColored, highlight: { persistent, transient } } = optionsRef.current
+  const { sortedSet, isColored, highlight, highlightSet, arrayLength } = optionsRef.current
+  const radius = Math.max(0, Math.floor(arrayLength * 0.01));
+
   if (sortedSet.has(index)) return 'lime';
 
-if (transient.has(index)) return 'red';
-if (persistent.get('min') === index) return 'blue';
-if (persistent.get('max') === index) return 'yellow';
-if (persistent.get('current') === index) return 'black';
+  if (highlight) {
+    for (const h of highlightSet) {
+      if (Math.abs(index - h) <= radius) {
+        return isColored ? 'white' : 'red';
+      }
+    }
+  }
 
-  if (isColored) return rainbowColors(ratio)
-  return defaultColors(ratio)
+  return isColored ? rainbowColors(ratio) : defaultColors(ratio);
 }
