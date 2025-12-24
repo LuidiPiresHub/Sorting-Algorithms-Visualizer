@@ -9,6 +9,7 @@ import { introSort } from './introSort';
 import { mergeSortBottomUp } from './mergeSortBottomUp';
 import { mergeSortTopDown } from './mergeSortTopDown';
 import { oddEvenSort } from './oddEvenSort';
+import { pancakeSort } from './pancakeSort';
 import { quickSortDualPivot } from './quickSortDualPivot';
 import { quickSortLL } from './quickSortLL';
 import { quickSortLR } from './quickSortLR';
@@ -32,6 +33,7 @@ export const algorithmsMap = {
   'Merge Sort ( Bottom-Up )': mergeSortBottomUp,
   'Merge Sort ( Top-Down )': mergeSortTopDown,
   'Odd-Even Sort': oddEvenSort,
+  'Pancake Sort': pancakeSort,
   'Quick Sort ( Dual Pivot )': quickSortDualPivot,
   'Quick Sort ( LL Pointers )': quickSortLL,
   'Quick Sort ( LR Pointers )': quickSortLR,
