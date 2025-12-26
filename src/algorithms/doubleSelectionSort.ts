@@ -9,6 +9,7 @@ export const doubleSelectionSort = (array: number[]): void => {
     let max = i;
 
     for (let j = i; j < n - i; j++) {
+      recordAlgorithmFrame({ type: 'current', index: j });
       if (array[j] < array[min]) min = j;
       if (array[j] > array[max]) max = j;
     }
