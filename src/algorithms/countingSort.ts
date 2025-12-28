@@ -7,10 +7,12 @@ export const countingSort = (array: number[]): void => {
   const output = new Array(n);
 
   for (let i = 0; i < n; i++) {
+    recordAlgorithmFrame({ type: 'current', index: i });
     count[array[i]]++;
   }
   
   for (let i = 1; i <= max; i++) {
+    recordAlgorithmFrame({ type: 'current', index: i });
     count[i] += count[i - 1];
   }
 

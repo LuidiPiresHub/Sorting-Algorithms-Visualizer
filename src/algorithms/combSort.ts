@@ -13,6 +13,7 @@ export const combSort = (array: number[]): void => {
     swapped = false;
 
     for (let i = 0; i + gap < n; i++) {
+      recordAlgorithmFrame({ type: 'current', index: i + gap });
       if (array[i] > array[i + gap]) {
         swap(array, i, i + gap);
         recordAlgorithmFrame({ type: 'swap', indexA: i, indexB: i + gap });
