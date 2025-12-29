@@ -5,6 +5,7 @@ export type IFrame =
   | { type: 'swap', indexA: number, indexB: number }
   | { type: 'set', index: number, value: number }
   | { type: 'current', index: number }
+  | { type: 'compare', indices: number[] }
   | { type: 'check', index: number }
 
 export interface IAnimationOptions {

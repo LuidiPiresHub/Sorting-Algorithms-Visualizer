@@ -60,6 +60,11 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
           playNote(optionsRef, array[f.index]);
         }
 
+        if (f.type === 'compare') {
+          current.highlightSet.add(f.indices[0]);
+          current.highlightSet.add(f.indices[1]);
+          playNote(optionsRef, array[f.indices[0]]);
+        }
 
         idx++;
         steps--;
