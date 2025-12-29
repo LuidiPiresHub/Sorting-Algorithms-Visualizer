@@ -52,6 +52,7 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
 
         if (f.type === 'current') {
           current.highlightSet.add(f.index);
+          playNote(optionsRef, array[f.index]);
         }
 
         if (f.type === 'check') {

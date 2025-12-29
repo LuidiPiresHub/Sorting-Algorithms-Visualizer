@@ -7,7 +7,7 @@ const heapify = (array: number[], start: number, end: number): void => {
   let child = 2 * root + 1;
 
   while (child < end) {
-    if (child + 1 < end && array[child] < array[child + 1]) child++;
+    if (child + 1 < end && array[child + 1] > array[child]) child++;
     array[root] = array[child];
     recordAlgorithmFrame({ type: 'set', index: root, value: array[child] });
     root = child;
