@@ -5,7 +5,7 @@ const audioCtx = new window.AudioContext();
 let activeNotes = 0;
 const MAX_NOTES = 100;
 
-const GLOBAL_VOLUME = 0.3;
+const GLOBAL_VOLUME = 0.03;
 
 export function playNote(optionsRef: RefObject<IAnimationOptions>, value: number): void {
   const { current } = optionsRef;
