@@ -20,17 +20,20 @@ export const drawCircle: IArrayModeFn = ({ ctx, array, optionsRef }): void => {
 
   const n = array.length;
   const offset = -Math.PI / 2;
+  const TAU = Math.PI * 2;
+  const EPS = TAU / CANVAS_SIZE;
 
   for (let i = 0; i < n; i++) {
-    const startAngle = (i / n) * Math.PI * 2 + offset;
-    const endAngle = ((i + 1) / n) * Math.PI * 2 + offset;
+    const startAngle = (i / n) * TAU + offset - EPS;
+    const endAngle = ((i + 1) / n) * TAU + offset + EPS;
 
     const ratio = array[i] / n;
     ctx.fillStyle = getColors(optionsRef, ratio, i);
 
     ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
     ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.lineTo(centerX, centerY);
+    ctx.closePath();
     ctx.fill();
   }
 
