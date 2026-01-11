@@ -6,13 +6,15 @@ import { arrayModesMap, type IArrayMode } from './arrayModes';
 import { arrayTypesMap, type IArrayType } from './arrayTypes';
 import { animateAlgorithm } from './animation/animateAlgorithm';
 import type { IAnimationOptions } from './interfaces/animation';
-import { sleep } from './utils/sleep';
+import { animationDelay, sleep } from './utils/time';
 import { finalCheck } from './animation/finalCheck';
 import defaultImage from './images/defaultImage.png';
 import Modal from './components/Modal';
 
 const img = new Image();
 img.src = defaultImage
+
+let lastObjectUrl: string | null = null;
 
 export default function App() {
   const [isColored, setisColored] = useState<boolean>(false);
@@ -65,17 +67,24 @@ export default function App() {
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>): void => {
     const ctx = canvasRef.current!.getContext('2d')!;
-    const files = event.target.files;
-    if (files) {
-      const file = files[0];
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        optionsRef.current.image = img;
-        const drawFn = arrayModesMap[selectedMode];
-        drawFn({ ctx, array, optionsRef });
-      };
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (lastObjectUrl) {
+      URL.revokeObjectURL(lastObjectUrl);
     }
+
+    const objectUrl = URL.createObjectURL(file);
+    lastObjectUrl = objectUrl;
+
+    const img = new Image();
+    img.src = objectUrl;
+
+    img.onload = () => {
+      optionsRef.current.image = img;
+      const drawFn = arrayModesMap[selectedMode];
+      drawFn({ ctx, array, optionsRef });
+    };
   };
 
   const handleAnimate = async (): Promise<void> => {
@@ -107,7 +116,7 @@ export default function App() {
     arrayTypeFn(algorithmArray);
 
     await animateAlgorithm({ ctx, array: animationArray, optionsRef, duration: 800 });
-    await sleep(500);
+    await animationDelay(500, optionsRef);
 
     const sortFn = algorithmsMap[selectedAlgorithm]
     sortFn(algorithmArray, baseRef.current)
@@ -117,7 +126,7 @@ export default function App() {
     finalCheck(algorithmArray)
     await animateAlgorithm({ ctx, array: animationArray, optionsRef, duration: 800 });
 
-    await sleep(500);
+    await animationDelay(500, optionsRef);
     optionsRef.current.sortedSet.clear();
 
     const drawFn = arrayModesMap[selectedMode];
@@ -187,7 +196,7 @@ export default function App() {
           </label>
 
           <label htmlFor="image" className='flex items-center gap-2 hover:text-blue-400 transition-colors cursor-pointer select-none'>
-            <input id='image' type="checkbox" className='custom-checkbox'  onChange={({ target: { checked } }) => optionsRef.current.highlight = checked}  />
+            <input id='image' type="checkbox" className='custom-checkbox' onChange={({ target: { checked } }) => optionsRef.current.highlight = checked} />
             <span>Highlight?</span>
           </label>
         </div>
