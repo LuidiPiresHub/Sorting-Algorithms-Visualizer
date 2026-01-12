@@ -129,7 +129,7 @@ export default function App() {
     await animationDelay(500, optionsRef);
     optionsRef.current.sortedSet.clear();
 
-    const drawFn = arrayModesMap[selectedMode];
+    const drawFn = optionsRef.current.drawFn;
     drawFn({ ctx, array: algorithmArray, optionsRef });
 
     optionsRef.current.isAnimating = false;
@@ -235,7 +235,12 @@ export default function App() {
         <label className="flex flex-col gap-2 w-full">
           <span className="text-sm font-bold">Array Type</span>
           <div className="relative">
-            <select value={selectedType} onChange={({ target: { value } }) => setSelectedType(value as IArrayType)} className="w-full appearance-none bg-gray-800 border border-gray-700 text-gray-100 rounded px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-400 transition-colors cursor-pointer">
+            <select
+              disabled={isSorting}
+              value={selectedType}
+              onChange={({ target: { value } }) => setSelectedType(value as IArrayType)}
+              className={`w-full appearance-none bg-gray-800 border border-gray-700 text-gray-100 rounded px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hover:border-blue-400 transition-colors ${isSorting ? 'opacity-50 cursor-default' : 'cursor-pointer'}`}
+            >
               {Object.keys(arrayTypesMap).map((type) => (
                 <option key={type} value={type}>{type}</option>
               ))}

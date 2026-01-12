@@ -53,6 +53,7 @@ export const quickSortDualPivot = (array: number[]): void => {
         break;
       }
     }
+    
     for (let i = right; i >= left; i--) {
       if (array[i] === p2) {
         swap(array, i, p2Index);

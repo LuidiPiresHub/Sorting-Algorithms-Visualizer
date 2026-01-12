@@ -7,9 +7,11 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
   return new Promise((resolve) => {
     const { current } = optionsRef
     current.sortedSet.clear();
+
     const frames = globalFrames.splice(0);
     const ONE_SEC = 1000;
     const n = frames.length;
+
     let idx = 0;
     let lastTime = 0;
     let acc = 0;
