@@ -84,8 +84,14 @@ const partition = (array: number[], start: number, end: number): number => {
   let j = end;
 
   while (true) {
-    while (array[i] < pivot) i++;
-    while (array[j] > pivot) j--;
+    while (array[i] < pivot) {
+      recordAlgorithmFrame({ type: 'current', index: i });
+      i++;
+    }
+    while (array[j] > pivot) {
+      recordAlgorithmFrame({ type: 'current', index: j });
+      j--;
+    }
 
     if (i >= j) return j;
     swap(array, i, j);

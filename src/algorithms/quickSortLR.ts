@@ -28,8 +28,14 @@ export const quickSortLR = (array: number[]): void => {
     let j = end;
 
     while (true) {
-      while (array[i] < pivot) i++;
-      while (array[j] > pivot) j--;
+      while (array[i] < pivot){
+        recordAlgorithmFrame({ type: 'current', index: i });
+         i++;
+      }
+      while (array[j] > pivot) {
+        recordAlgorithmFrame({ type: 'current', index: j });
+        j--;
+      }
 
       if (i >= j) break;
       swap(array, i, j);
