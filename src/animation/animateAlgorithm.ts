@@ -68,6 +68,16 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
           playNote(optionsRef, array[f.indices[0]]);
         }
 
+        if (f.type === 'bucket') {
+          array[f.index] = f.value;
+          f.buckets.forEach((b) => {
+            if (b < current.arrayLength) {
+              current.highlightSet.add(b)
+            }
+          });
+          playNote(optionsRef, array[f.index]);
+        }
+
         idx++;
         steps--;
       }

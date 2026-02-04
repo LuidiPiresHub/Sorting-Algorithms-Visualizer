@@ -23,9 +23,8 @@ const countingSortByDigit = (array: number[], exp: number, base: number): void =
     const digit = Math.floor(value / exp) % base;
     const pos = count[digit];
     output[pos] = value;
+    recordAlgorithmFrame({ type: 'bucket', index: pos, value, buckets: [...count] })
     count[digit]++;
-    recordAlgorithmFrame({ type: 'set', index: pos, value: value });
-
   }
 
   for (let i = 0; i < n; i++) {
@@ -36,7 +35,7 @@ const countingSortByDigit = (array: number[], exp: number, base: number): void =
 
 export const radixSortLSD = (array: number[], base?: number): void => {
   if (!base) return;
-  
+
   const max = Math.max(...array);
   let exp = 1;
 

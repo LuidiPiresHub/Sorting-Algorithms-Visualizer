@@ -7,6 +7,7 @@ export type IFrame =
   | { type: 'current', index: number }
   | { type: 'compare', indices: number[] }
   | { type: 'check', index: number }
+  | { type: 'bucket', index: number, value: number, buckets: number[] }
 
 export interface IAnimationOptions {
   speed: number;
