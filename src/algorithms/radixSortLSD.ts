@@ -9,6 +9,7 @@ const countingSortByDigit = (array: number[], exp: number, base: number): void =
     const value = array[i];
     const digit = Math.floor(value / exp) % base;
     count[digit]++;
+    recordAlgorithmFrame({ type: 'current', index: i });
   }
 
   let running = 0;
@@ -29,7 +30,6 @@ const countingSortByDigit = (array: number[], exp: number, base: number): void =
 
   for (let i = 0; i < n; i++) {
     array[i] = output[i];
-    recordAlgorithmFrame({ type: 'set', index: i, value: output[i] });
   }
 };
 
