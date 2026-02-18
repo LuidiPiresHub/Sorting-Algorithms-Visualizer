@@ -1,61 +1,64 @@
 import { recordAlgorithmFrame } from '../animation/recordFrame';
 
-function getDigit(num: number, p: number, base: number): number {
-  return Math.floor(num / base ** p) % base;
-}
-
-function countDigits(num: number, base: number): number {
-  if (num === 0) return 1;
-  return Math.floor(Math.log(num) / Math.log(base)) + 1;
-}
-
-function msdSortInPlace(
-  arr: number[],
-  start: number,
-  end: number,
-  p: number,
-  base: number
-): void {
-  if (end - start <= 1 || p < 0) return;
-
-  const buckets: number[][] = Array.from({ length: base }, () => []);
+const countingSortByDigit = (array: number[], start: number, end: number, exp: number, base: number): void => {
+  const n = end - start;
+  const count = Array.from<number>({ length: base }).fill(0);
+  const output = new Array<number>(n);
 
   for (let i = start; i < end; i++) {
-    const digit = getDigit(arr[i], p, base);
-    buckets[digit].push(arr[i]);
-    recordAlgorithmFrame({ type: 'set', index: i, value: arr[i] });
+    const value = array[i];
+    const digit = Math.floor(value / exp) % base;
+    count[digit]++;
+    recordAlgorithmFrame({ type: 'current', index: i });
   }
 
-  let index = end - 1;
+  for (let i = 1; i < count.length; i++) {
+    count[i] += count[i - 1];
+  }
 
-  for (let b = buckets.length - 1; b >= 0; b--) {
-    const bucket = buckets[b];
+  for (let i = end - 1; i >= start; i--) {
+    const value = array[i];
+    const digit = Math.floor(value / exp) % base;
+    const pos = --count[digit];
+    output[pos] = value;
+    recordAlgorithmFrame({ type: 'bucket', index: start + pos, value, buckets: [...count.map((c) => start + c)] });
+  }
 
-    for (let i = bucket.length - 1; i >= 0; i--) {
-      const num = bucket[i];
+  for (let i = 0; i < n; i++) {
+    array[start + i] = output[i];
+  }
+};
 
-      arr[index] = num;
-      recordAlgorithmFrame({ type: 'set', index, value: num });
+const radixMSD = (array: number[], start: number, end: number, exp: number, base: number): void => {
+  if (end - start <= 1 || exp <= 0) return;
 
-      index--;
+  countingSortByDigit(array, start, end, exp, base);
+
+  let bucketStart = start;
+
+  for (let digit = 0; digit < base; digit++) {
+    let bucketEnd = bucketStart;
+
+    while (bucketEnd < end && Math.floor(array[bucketEnd] / exp) % base === digit) {
+      bucketEnd++
     }
+
+    radixMSD(array, bucketStart, bucketEnd, Math.floor(exp / base), base);
+    bucketStart = bucketEnd;
+  }
+};
+
+export const radixSortMSD = (array: number[], base?: number): void => {
+  if (!base) return;
+
+  const start = 0;
+  const end = array.length;
+  const max = Math.max(...array);
+  let exp = 1;
+
+  while (Math.floor(max / exp) >= base) {
+    exp *= base;
   }
 
-  index = start;
-  for (const bucket of buckets) {
-    const size = bucket.length;
-    if (size > 1) {
-      msdSortInPlace(arr, index, index + size, p - 1, base);
-    }
-    index += size;
-  }
-}
-
-export function radixSortMSD(arr: number[], base?: number): void {
-  if (arr.length === 0 || !base) return;
-
-  const max = Math.max(...arr);
-  const k = countDigits(max, base);
-
-  msdSortInPlace(arr, 0, arr.length, k - 1, base);
+  radixMSD(array, start, end, exp, base);
 }
