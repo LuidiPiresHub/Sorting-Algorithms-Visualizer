@@ -7,7 +7,7 @@ const merge = (array: number[], aux: number[], left: number, mid: number, right:
 
   while (i < mid && j < right) {
     recordAlgorithmFrame({ type: 'compare', indices: [i, j] })
-    aux[k++] = array[i] < array[j] ? array[i++] : array[j++];
+    aux[k++] = array[i] <= array[j] ? array[i++] : array[j++];
   }
 
   while (i < mid) aux[k++] = array[i++];
