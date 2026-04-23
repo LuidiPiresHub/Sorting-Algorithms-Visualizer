@@ -1,320 +1,300 @@
 import { recordAlgorithmFrame } from '../animation/recordFrame';
 import { swap } from '../utils/swap';
 
-interface Run {
+interface IRun {
   start: number;
   end: number;
 }
 
-let minGallop = 7;
-
-const gallopLeft = (key: number, array: number[], start: number, length: number): number => {
-  let lo = start;
-  let hi = start + length;
-
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (array[mid] < key) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-};
-
-const gallopRight = (key: number, array: number[], start: number, length: number): number => {
-  let lo = start;
-  let hi = start + length;
-
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (array[mid] <= key) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-};
-
-const reverseGallopLeft = (key: number, array: number[], start: number, length: number): number => {
-  let lo = start - length + 1;
-  let hi = start + 1;
-
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (array[mid] < key) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-};
-
-const reverseGallopRight = (key: number, array: number[], start: number, length: number): number => {
-  let lo = start - length + 1;
-  let hi = start + 1;
-
-  while (lo < hi) {
-    const mid = (lo + hi) >>> 1;
-    if (array[mid] <= key) lo = mid + 1;
-    else hi = mid;
-  }
-  return lo;
-};
-
-const merge = (array: number[], leftRun: Run, rightRun: Run): Run => {
-  const leftStart = leftRun.start;
-  const leftEnd = leftRun.end;
-  const rightStart = rightRun.start;
-  const rightEnd = rightRun.end;
-
-  const leftLen = leftEnd - leftStart;
-  const rightLen = rightEnd - rightStart;
-
-  const aux = new Array(Math.min(leftLen, rightLen));
-
-  if (leftLen <= rightLen) {
-
-    for (let i = 0; i < leftLen; i++) {
-      aux[i] = array[leftStart + i];
-    }
-
-    let i = 0;
-    let j = rightStart;
-    let k = leftStart;
-
-    let countLeft = 0;
-    let countRight = 0;
-
-    while (i < leftLen && j < rightEnd) {
-      if (aux[i] <= array[j]) {
-        array[k++] = aux[i++];
-        recordAlgorithmFrame({ type: 'set', index: k - 1, value: aux[i - 1] });
-        countLeft++;
-        countRight = 0;
-      } else {
-        array[k++] = array[j++];
-        recordAlgorithmFrame({ type: 'set', index: k - 1, value: array[j - 1] });
-        countRight++;
-        countLeft = 0;
-      }
-
-      if (countLeft >= minGallop || countRight >= minGallop) {
-
-        if (countLeft >= minGallop) {
-          const newJ = gallopRight(aux[i], array, j, rightEnd - j);
-          const n = newJ - j;
-
-          for (let t = 0; t < n; t++) {
-            array[k++] = array[j++];
-            recordAlgorithmFrame({ type: 'set', index: k - 1, value: array[j - 1] });
-          }
-
-          if (i >= leftLen || j >= rightEnd) break;
-          array[k++] = aux[i++];
-          recordAlgorithmFrame({ type: 'set', index: k - 1, value: aux[i - 1] });
-        } else {
-          const newI = gallopLeft(array[j], aux, i, leftLen - i);
-          const n = newI - i;
-
-          for (let t = 0; t < n; t++) {
-            array[k++] = aux[i++];
-            recordAlgorithmFrame({ type: 'set', index: k - 1, value: aux[i - 1] });
-          }
-
-          if (i >= leftLen || j >= rightEnd) break;
-          array[k++] = array[j++];
-          recordAlgorithmFrame({ type: 'set', index: k - 1, value: array[j - 1] });
-        }
-
-        minGallop++;
-        countLeft = 0;
-        countRight = 0;
-      }
-    }
-
-    while (i < leftLen) {
-      array[k++] = aux[i++];
-      recordAlgorithmFrame({ type: 'set', index: k - 1, value: aux[i - 1] });
-    }
-
-  } else {
-    for (let i = 0; i < rightLen; i++) {
-      aux[i] = array[rightStart + i];
-    }
-
-    let i = rightLen - 1;
-    let j = leftEnd - 1;
-    let k = rightEnd - 1;
-
-    let countLeft = 0;
-    let countRight = 0;
-
-    while (i >= 0 && j >= leftStart) {
-      if (aux[i] >= array[j]) {
-        array[k--] = aux[i--];
-        recordAlgorithmFrame({ type: 'set', index: k + 1, value: aux[i + 1] });
-        countLeft++;
-        countRight = 0;
-      } else {
-        array[k--] = array[j--];
-        recordAlgorithmFrame({ type: 'set', index: k + 1, value: array[j + 1] });
-        countRight++;
-        countLeft = 0;
-      }
-
-      if (countLeft >= minGallop || countRight >= minGallop) {
-
-        if (countLeft >= minGallop) {
-          const newJ = reverseGallopRight(aux[i], array, j, j - leftStart + 1);
-          const n = j - newJ;
-
-          for (let t = 0; t < n; t++) {
-            array[k--] = array[j--];
-            recordAlgorithmFrame({ type: 'set', index: k + 1, value: array[j + 1] });
-          }
-          if (i < 0 || j < leftStart) break;
-
-          array[k--] = aux[i--];
-          recordAlgorithmFrame({ type: 'set', index: k + 1, value: aux[i + 1] });
-        } else {
-          const newI = reverseGallopLeft(array[j], aux, i, i + 1);
-          const n = i - newI;
-
-          for (let t = 0; t < n; t++) {
-            array[k--] = aux[i--];
-            recordAlgorithmFrame({ type: 'set', index: k + 1, value: aux[i + 1] });
-          }
-          if (i < 0 || j < leftStart) break;
-
-          array[k--] = array[j--];
-          recordAlgorithmFrame({ type: 'set', index: k + 1, value: array[j + 1] });
-        }
-
-        minGallop++;
-        countLeft = 0;
-        countRight = 0;
-      }
-    }
-
-    while (i >= 0) {
-      array[k--] = aux[i--];
-      recordAlgorithmFrame({ type: 'set', index: k + 1, value: aux[i + 1] });
-    }
-  }
-
-  return { start: leftStart, end: rightEnd };
-};
-
-const fixInvariants = (array: number[], stack: Run[]): void => {
-  while (stack.length >= 2) {
-    if (stack.length >= 3) {
-      const n = stack.length - 1;
-      const A = stack[n - 2];
-      const B = stack[n - 1];
-      const C = stack[n];
-
-      const lenA = A.end - A.start;
-      const lenB = B.end - B.start;
-      const lenC = C.end - C.start;
-
-      const cond1 = lenA <= lenB + lenC;
-      const cond2 = lenB <= lenC;
-
-      if (cond1 || cond2) {
-        if (lenA < lenC) {
-          const merged = merge(array, A, B);
-          stack.splice(n - 2, 2, merged);
-        } else {
-          const merged = merge(array, B, C);
-          stack.splice(n - 1, 2, merged);
-        }
-        continue;
-      }
-    }
-
-    const n = stack.length - 1;
-    const B = stack[n - 1];
-    const C = stack[n];
-
-    const lenB = B.end - B.start;
-    const lenC = C.end - C.start;
-
-    if (lenB <= lenC) {
-      const merged = merge(array, B, C);
-      stack.splice(n - 1, 2, merged);
-      continue;
-    }
-
-    break;
-  }
-};
-
-const insertionSort = (array: number[], start: number, end: number): void => {
-  for (let i = start + 1; i < end; i++) {
-    const key = array[i];
-    let j = i - 1;
-
-    while (j >= start && array[j] > key) {
-      array[j + 1] = array[j];
-      recordAlgorithmFrame({ type: 'set', index: j + 1, value: array[j] });
-      j--;
-    }
-
-    array[j + 1] = key;
-    recordAlgorithmFrame({ type: 'set', index: j + 1, value: key });
-  }
-};
+let minGallop = 7
 
 const reverse = (array: number[], start: number, end: number): void => {
-  let i = start;
-  let j = end - 1;
-  while (i < j) {
-    swap(array, i, j);
-    recordAlgorithmFrame({ type: 'swap', indexA: i, indexB: j });
-    i++;
-    j--;
+  while (start < end) {
+    recordAlgorithmFrame({ type: 'swap', indexA: start, indexB: end })
+    swap(array, start++, end--)
   }
-};
+}
 
-const detectRuns = (array: number[], minRun: number): Run[] => {
-  const n = array.length;
-  const stack: Run[] = [];
-  let start = 0;
+const getMinRun = (n: number): number => {
+  let hasRemainder = 0
+
+  while (n >= 64) {
+    hasRemainder = hasRemainder || n % 2
+    n = Math.floor(n / 2)
+  }
+
+  return n + hasRemainder
+}
+
+const gallopBackward = (array: number[], target: number, start: number, end: number): number => {
+  let exp = 1
+  while (end - exp > start && array[end - exp] > target) {
+    exp *= 2
+  }
+
+  let i = Math.max(end - exp, start)
+  let j = end - Math.floor(exp / 2)
+
+  while (i <= j) {
+    const mid = Math.floor((i + j) / 2)
+
+    if (array[mid] > target) {
+      j = mid - 1
+    } else {
+      i = mid + 1
+    }
+  }
+
+  return i
+}
+
+const gallopForward = (array: number[], target: number, start: number, end: number): number => {
+  let exp = 1
+  while (start + exp < end && array[start + exp] < target) {
+    exp *= 2
+  }
+
+  let i = start + Math.floor(exp / 2)
+  let j = Math.min(start + exp, end)
+
+  while (i <= j) {
+    const mid = Math.floor((i + j) / 2)
+
+    if (array[mid] < target) {
+      i = mid + 1
+    } else {
+      j = mid - 1
+    }
+  }
+
+  return i
+}
+
+const mergeBackward = (array: number[], aux: number[], leftRun: IRun, rightRun: IRun): void => {
+  let i = leftRun.end - 1
+  let j = rightRun.end - 1
+  let k = rightRun.end - 1
+
+  let leftWins = 0
+  let rightWins = 0
+
+  for (let t = rightRun.start; t < rightRun.end; t++) {
+    aux[t] = array[t]
+  }
+
+  while (i >= leftRun.start && j >= rightRun.start) {
+    if (array[i] > aux[j]) {
+      recordAlgorithmFrame({ type: 'set', index: k, value: array[i] })
+      array[k--] = array[i--]
+      leftWins++
+      rightWins = 0
+    } else {
+      recordAlgorithmFrame({ type: 'set', index: k, value: aux[j] })
+      array[k--] = aux[j--]
+      rightWins++
+      leftWins = 0
+    }
+
+    if (leftWins >= minGallop || rightWins >= minGallop) {
+      if (leftWins >= minGallop) {
+        const dest = gallopBackward(array, aux[j], leftRun.start, i)
+        const copied = i - dest
+
+        while (i >= dest) {
+          recordAlgorithmFrame({ type: 'set', index: k, value: array[i] })
+          array[k--] = array[i--]
+        }
+
+        minGallop += copied > 1 ? -1 : 1
+        minGallop = Math.max(minGallop, 1)
+      } else {
+        const dest = gallopBackward(aux, array[i], rightRun.start, j)
+        const copied = j - dest
+
+        while (j >= dest) {
+          recordAlgorithmFrame({ type: 'set', index: k, value: aux[j] })
+          array[k--] = aux[j--]
+        }
+
+        minGallop += copied > 1 ? -1 : 1
+        minGallop = Math.max(minGallop, 1)
+      }
+
+      leftWins = 0
+      rightWins = 0
+    }
+  }
+
+  while (j >= rightRun.start) {
+    recordAlgorithmFrame({ type: 'set', index: k, value: aux[j] })
+    array[k--] = aux[j--]
+  }
+}
+
+const mergeForward = (array: number[], aux: number[], leftRun: IRun, rightRun: IRun): void => {
+  let i = leftRun.start
+  let j = rightRun.start
+  let k = leftRun.start
+
+  let leftWins = 0
+  let rightWins = 0
+
+  for (let t = leftRun.start; t < leftRun.end; t++) {
+    aux[t] = array[t]
+  }
+
+  while (i < leftRun.end && j < rightRun.end) {
+    if (aux[i] <= array[j]) {
+      recordAlgorithmFrame({ type: 'set', index: k, value: aux[i] })
+      array[k++] = aux[i++]
+      leftWins++
+      rightWins = 0
+    } else {
+      recordAlgorithmFrame({ type: 'set', index: k, value: array[j] })
+      array[k++] = array[j++]
+      rightWins++
+      leftWins = 0
+    }
+
+    if (leftWins >= minGallop || rightWins >= minGallop) {
+      if (leftWins >= minGallop) {
+        const dest = gallopForward(aux, array[j], i, leftRun.end)
+        const copied = dest - i
+
+        while (i < dest) {
+          recordAlgorithmFrame({ type: 'set', index: k, value: aux[i] })
+          array[k++] = aux[i++]
+        }
+
+        minGallop += copied > 1 ? -1 : 1
+        minGallop = Math.max(minGallop, 1)
+      } else {
+        const dest = gallopForward(array, aux[i], j, rightRun.end)
+        const copied = dest - j
+
+        while (j < dest) {
+          recordAlgorithmFrame({ type: 'set', index: k, value: array[j] })
+          array[k++] = array[j++]
+        }
+
+        minGallop += copied > 1 ? -1 : 1
+        minGallop = Math.max(minGallop, 1)
+      }
+
+      leftWins = 0
+      rightWins = 0
+    }
+  }
+
+  while (i < leftRun.end) {
+    recordAlgorithmFrame({ type: 'set', index: k, value: aux[i] })
+    array[k++] = aux[i++]
+  }
+}
+
+const merge = (array: number[], aux: number[], leftRun: IRun, rightRun: IRun): IRun => {
+  const lenLeft = leftRun.end - leftRun.start
+  const lenRight = rightRun.end - rightRun.start
+
+  if (lenLeft <= lenRight) {
+    mergeForward(array, aux, leftRun, rightRun)
+  } else {
+    mergeBackward(array, aux, leftRun, rightRun)
+  }
+
+  return { start: leftRun.start, end: rightRun.end }
+}
+
+const fixInvariants = (array: number[], aux: number[], stack: IRun[]): void => {
+  while (stack.length >= 2) {
+    const n = stack.length
+
+    const Z = stack[n - 1]
+    const Y = stack[n - 2]
+    const X = stack[n - 3] ?? null
+
+    const lenZ = Z.end - Z.start
+    const lenY = Y.end - Y.start
+    const lenX = X ? X.end - X.start : Infinity
+
+    const shouldMergeXY = lenX <= lenY + lenZ && lenX < lenZ
+    const shouldMerge = lenY <= lenZ || lenX <= lenY + lenZ
+
+    if (!shouldMerge) break
+
+    if (shouldMergeXY && X) {
+      stack.splice(n - 3, 2, merge(array, aux, X, Y))
+    } else {
+      stack.splice(n - 2, 2, merge(array, aux, Y, Z))
+    }
+  }
+}
+
+const insertionSortRange = (array: number[], start: number, end: number): void => {
+  for (let i = start + 1; i < end; i++) {
+    const value = array[i]
+    let j = i - 1
+
+    while (j >= start && array[j] > value) {
+      recordAlgorithmFrame({ type: 'set', index: j + 1, value: array[j] })
+      array[j + 1] = array[j]
+      j--
+    }
+
+    array[j + 1] = value
+    recordAlgorithmFrame({ type: 'set', index: j + 1, value })
+  }
+}
+
+const detectRuns = (array: number[], aux: number[], minRun: number): IRun[] => {
+  const n = array.length
+  const runs: IRun[] = []
+  let start = 0
 
   while (start < n) {
-    let end = start + 1;
+    let end = start + 1
 
     if (end >= n) {
-      stack.push({ start, end });
+      runs.push({ start, end });
       break;
     }
 
-    const isAscending = array[start] <= array[end];
+    const isAscending = array[start] <= array[end]
+
     if (isAscending) {
-      while (end < n && array[end - 1] <= array[end]) end++;
+      while (end < n && array[end - 1] <= array[end]) end++
     } else {
-      while (end < n && array[end - 1] > array[end]) end++;
-      reverse(array, start, end);
+      while (end < n && array[end - 1] > array[end]) end++
+      reverse(array, start, end - 1)
     }
 
-    const runLen = end - start;
-    if (runLen < minRun) {
-      const newEnd = Math.min(n, start + minRun);
-      insertionSort(array, start, newEnd);
-      end = newEnd;
+    const runSize = end - start
+
+    if (runSize <= minRun) {
+      const newEnd = Math.min(start + minRun, n)
+      insertionSortRange(array, start, newEnd)
+      end = newEnd
     }
 
-    stack.push({ start, end });
-    fixInvariants(array, stack);
-    start = end;
+    runs.push({ start, end })
+    fixInvariants(array, aux, runs)
+    start = end
   }
 
-  return stack;
-};
+  return runs
+}
 
 export const timSort = (array: number[]): void => {
-  const MIN_RUN = 32;
-  const runs = detectRuns(array, MIN_RUN);
+  const n = array.length
+  const aux = new Array(Math.ceil(n / 2))
+  const MIN_RUN = getMinRun(n)
+  const MIN_GALLOP = 7
+  minGallop = MIN_GALLOP
+  const stack = detectRuns(array, aux, MIN_RUN)
 
-  while (runs.length > 1) {
-    const B = runs.pop()!;
-    const A = runs.pop()!;
-    const merged = merge(array, A, B);
-    runs.push(merged);
+  while (stack.length > 1) {
+    const rightStack = stack.pop()!
+    const leftStack = stack.pop()!
+    stack.push(merge(array, aux, leftStack, rightStack))
   }
-};
+}
