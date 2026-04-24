@@ -153,7 +153,7 @@ export default function App() {
   }, [array, selectedMode, isColored])
 
   return (
-    <main className='h-dvh text-white flex flex-col lg:flex-row'>
+    <main className='h-dvh bg-[rgb(30,30,50)] text-white flex flex-col lg:flex-row'>
       <Modal
         isOpen={modalIsOpen}
         onBaseChange={(base) => baseRef.current = base}
@@ -181,7 +181,7 @@ export default function App() {
         />
       </div>
 
-      <aside className='bg-[rgb(40,40,60)] py-4 px-6 flex flex-col gap-4 h-full w-full lg:w-[400px] lg:shrink-0 overflow-y-auto scrollbar'>
+      <aside className='bg-[rgb(40,40,60)] py-4 px-6 flex flex-col gap-4 min-h-dvh h-full w-full lg:w-[400px] lg:shrink-0 overflow-y-auto scrollbar'>
         <h1 className='text-lg sm:text-2xl font-bold text-blue-400 text-center sm:whitespace-nowrap'>Sorting Algorithms Visualizer</h1>
 
         <div className='flex max-[350px]:flex-col gap-4 justify-evenly'>

@@ -28,7 +28,7 @@ const getMinRun = (n: number): number => {
 
 const gallopBackward = (array: number[], target: number, start: number, end: number): number => {
   let exp = 1
-  while (end - exp > start && array[end - exp] > target) {
+  while (end - exp >= start && array[end - exp] > target) {
     exp *= 2
   }
 
@@ -50,7 +50,7 @@ const gallopBackward = (array: number[], target: number, start: number, end: num
 
 const gallopForward = (array: number[], target: number, start: number, end: number): number => {
   let exp = 1
-  while (start + exp < end && array[start + exp] < target) {
+  while (start + exp <= end && array[start + exp] < target) {
     exp *= 2
   }
 
