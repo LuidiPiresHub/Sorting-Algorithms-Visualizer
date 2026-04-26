@@ -82,6 +82,19 @@ const mergeBackward = (array: number[], aux: number[], leftRun: IRun, rightRun: 
     aux[t] = array[t]
   }
 
+  // ========================= Visual =========================
+
+  let iVisual = leftRun.end - 1
+  let jVisual = rightRun.end - 1
+
+  while (iVisual >= leftRun.start && jVisual >= rightRun.start) {
+    recordAlgorithmFrame({ type: 'compare', indices: [iVisual, jVisual] })
+    if (array[iVisual] > aux[jVisual]) iVisual--
+    else jVisual--
+  }
+
+  // ==========================================================
+
   while (i >= leftRun.start && j >= rightRun.start) {
     if (array[i] > aux[j]) {
       recordAlgorithmFrame({ type: 'set', index: k, value: array[i] })
@@ -142,6 +155,19 @@ const mergeForward = (array: number[], aux: number[], leftRun: IRun, rightRun: I
   for (let t = leftRun.start; t < leftRun.end; t++) {
     aux[t] = array[t]
   }
+
+  // ========================= Visual =========================
+
+  let iVisual = leftRun.start
+  let jVisual = rightRun.start
+
+  while (iVisual < leftRun.end && jVisual < rightRun.end) {
+    recordAlgorithmFrame({ type: 'compare', indices: [iVisual, jVisual] })
+    if (aux[iVisual] <= array[jVisual]) iVisual++
+    else jVisual++
+  }
+
+  // ==========================================================
 
   while (i < leftRun.end && j < rightRun.end) {
     if (aux[i] <= array[j]) {
