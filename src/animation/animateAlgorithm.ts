@@ -63,8 +63,9 @@ export const animateAlgorithm = ({ ctx, array, optionsRef, duration }: IAnimateA
         }
 
         if (f.type === 'compare') {
-          current.highlightSet.add(f.indices[0]);
-          current.highlightSet.add(f.indices[1]);
+          f.indices.forEach((i) => {
+            current.highlightSet.add(i);
+          });
           playNote(optionsRef, array[f.indices[0]]);
         }
 
