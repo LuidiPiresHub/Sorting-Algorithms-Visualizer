@@ -116,6 +116,11 @@ export default function App() {
     arrayTypeFn(algorithmArray);
 
     await animateAlgorithm({ ctx, array: animationArray, optionsRef, duration: 800 });
+    const drawFn = optionsRef.current.drawFn;
+
+    optionsRef.current.highlightSet.clear()
+    drawFn({ ctx, array: algorithmArray, optionsRef })
+
     await animationDelay(500, optionsRef);
 
     const sortFn = algorithmsMap[selectedAlgorithm]
@@ -129,7 +134,6 @@ export default function App() {
     await animationDelay(500, optionsRef);
     optionsRef.current.sortedSet.clear();
 
-    const drawFn = optionsRef.current.drawFn;
     drawFn({ ctx, array: algorithmArray, optionsRef });
 
     optionsRef.current.isAnimating = false;
